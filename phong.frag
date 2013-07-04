@@ -7,7 +7,7 @@ varying vec3 normal;
 
 void main (void)
 {
-  vec3 light = normalize(gl_LightSource[0].position.xyz * position.w - gl_LightSource[0].position.w * position.xyz);
+  vec3 light = normalize((gl_LightSource[0].position * position.w - gl_LightSource[0].position.w * position).xyz);
   vec3 fnormal = normalize(normal);
   float diffuse = max(dot(light, fnormal), 0.0);
 
