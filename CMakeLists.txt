@@ -7,18 +7,24 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # ソースファイル
 set(SOURCES
     main.cpp
-    scene.cpp
+    glsl.cpp
     trackball.cpp
 )
 
 # ヘッダファイル
 set(HEADERS
-    scene.h
+    glsl.h
     trackball.h
 )
 
 # リソースファイル
 set(RESOURCE_FILES
+    simple.vert
+    simple.frag
+    gouraud.vert
+    gouraud.frag
+    phong.vert
+    phong.frag
 )
 
 if(APPLE)

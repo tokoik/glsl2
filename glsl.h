@@ -1,4 +1,25 @@
-#if defined(WIN32)
+#pragma once
+#define GLSL_H
+
+/* OpenGL */
+#if defined(__APPLE__)
+#  define GL_SILENCE_DEPRECATION
+#  include <GLUT/glut.h>
+#  include <OpenGL/glext.h>
+#else
+#  if defined(_MSC_VER)
+//#    pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
+#    define _USE_MATH_DEFINES
+#    define _CRT_SECURE_NO_WARNINGS
+#  endif
+#  include <GL/glut.h>
+#  include <GL/glext.h>
+#endif
+
+/*
+** GLSL 関連の関数ポインタ
+*/
+#if defined(_WIN32)
 extern PFNGLATTACHSHADERPROC glAttachShader;
 extern PFNGLBINDATTRIBLOCATIONPROC glBindAttribLocation;
 extern PFNGLBLENDEQUATIONSEPARATEPROC glBlendEquationSeparate;
