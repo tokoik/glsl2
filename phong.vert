@@ -7,10 +7,10 @@ varying vec3 normal;
 
 void main(void)
 {
-  // ’¸“_ˆÊ’uC–@üƒxƒNƒgƒ‹
+  // é ‚ç‚¹ä½ç½®ï¼Œæ³•ç·šãƒ™ã‚¯ãƒˆãƒ«
   position = gl_ModelViewMatrix * gl_Vertex;
   normal = normalize(gl_NormalMatrix * gl_Normal);
 
-  // ’¸“_ˆÊ’u
+  // é ‚ç‚¹ä½ç½®
   gl_Position = ftransform();
 }

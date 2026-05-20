@@ -4,22 +4,22 @@
 
 void main(void)
 {
-  // ’¸“_ˆÊ’uC–@üƒxƒNƒgƒ‹CŒõüƒxƒNƒgƒ‹C‹üƒxƒNƒgƒ‹C’†ŠÔƒxƒNƒgƒ‹
+  // é ‚ç‚¹ä½ç½®ï¼Œæ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ï¼Œå…‰ç·šãƒ™ã‚¯ãƒˆãƒ«ï¼Œè¦–ç·šãƒ™ã‚¯ãƒˆãƒ«ï¼Œä¸­é–“ãƒ™ã‚¯ãƒˆãƒ«
   vec4 position = gl_ModelViewMatrix * gl_Vertex;
   vec3 normal = normalize(gl_NormalMatrix * gl_Normal);
   vec3 light = normalize((gl_LightSource[0].position * position.w - gl_LightSource[0].position.w * position).xyz);
   vec3 view = -normalize(position.xyz);
   vec3 halfway = normalize(light + view);
 
-  // ŠgU”½Ë—¦‚Æ‹¾–Ê”½Ë—¦
+  // æ‹¡æ•£åå°„ç‡ã¨é¡é¢åå°„ç‡
   float diffuse = max(dot(light, normal), 0.0);
   float specular = pow(max(dot(normal, halfway), 0.0), gl_FrontMaterial.shininess);
 
-  // ’¸“_‚ÌF
+  // é ‚ç‚¹ã®è‰²
   gl_FrontColor = gl_FrontLightProduct[0].ambient
                 + gl_FrontLightProduct[0].diffuse * diffuse
                 + gl_FrontLightProduct[0].specular * specular;
 
-  // ’¸“_ˆÊ’u
+  // é ‚ç‚¹ä½ç½®
   gl_Position = ftransform();
 }

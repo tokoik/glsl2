@@ -7,17 +7,17 @@ varying vec3 normal;
 
 void main (void)
 {
-  // –@üƒxƒNƒgƒ‹CŒõüƒxƒNƒgƒ‹C‹üƒxƒNƒgƒ‹C’†ŠÔƒxƒNƒgƒ‹
+  // æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«ï¼Œå…‰ç·šãƒ™ã‚¯ãƒˆãƒ«ï¼Œè¦–ç·šãƒ™ã‚¯ãƒˆãƒ«ï¼Œä¸­é–“ãƒ™ã‚¯ãƒˆãƒ«
   vec3 fnormal = normalize(normal);
   vec3 light = normalize((gl_LightSource[0].position * position.w - gl_LightSource[0].position.w * position).xyz);
   vec3 view = -normalize(position.xyz);
   vec3 halfway = normalize(light + view);
 
-  // ŠgU”½Ë—¦‚Æ‹¾–Ê”½Ë—¦
+  // æ‹¡æ•£åå°„ç‡ã¨é¡é¢åå°„ç‡
   float diffuse = max(dot(fnormal, light), 0.0);
   float specular = pow(max(dot(fnormal, halfway), 0.0), gl_FrontMaterial.shininess);
 
-  // ƒtƒ‰ƒOƒƒ“ƒg‚ÌF
+  // ãƒ•ãƒ©ã‚°ãƒ¡ãƒ³ãƒˆã®è‰²
   gl_FragColor = gl_FrontLightProduct[0].ambient
                + gl_FrontLightProduct[0].diffuse * diffuse
                + gl_FrontLightProduct[0].specular * specular;

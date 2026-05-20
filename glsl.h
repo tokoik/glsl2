@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #define GLSL_H
 
 /* OpenGL */
@@ -17,7 +17,7 @@
 #endif
 
 /*
-** GLSL ŠÖ˜A‚ÌŠÖ”ƒ|ƒCƒ“ƒ^
+** GLSL é–¢é€£ã®é–¢æ•°ãƒã‚¤ãƒ³ã‚¿
 */
 #if defined(_WIN32)
 extern PFNGLATTACHSHADERPROC glAttachShader;

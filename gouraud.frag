@@ -4,6 +4,6 @@
 
 void main (void)
 {
-  // フラグメントの色
+  // 繝輔Λ繧ｰ繝｡繝ｳ繝医�ｮ濶ｲ
   gl_FragColor = gl_Color;
 }
