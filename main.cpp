@@ -1,22 +1,11 @@
-﻿#if defined(__APPLE__)
-#  define GL_SILENCE_DEPRECATION
-#  include <GLUT/glut.h>
-#  include <OpenGL/glext.h>
-#else
-#  if defined(_MSC_VER)
-//#    pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
-#    define _USE_MATH_DEFINES
-#    define _CRT_SECURE_NO_WARNINGS
-#  endif
-#  include <GL/glut.h>
-#  include <GL/glext.h>
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+﻿/* OpenGL / GLSL 関連の宣言 */
+#include "glsl.h"
 
 /* トラックボール処理用関数の宣言 */
 #include "trackball.h"
+
+/* 標準ライブラリ */
+#include <stdio.h>
 
 /* 1 ならティーポットを描く */
 #define DRAW_TEAPOT 0
@@ -29,11 +18,8 @@ static const GLfloat lightcol[] = { 1.0f, 1.0f, 1.0f, 1.0f }; /* 直接光強度
 static const GLfloat lightamb[] = { 0.1f, 0.1f, 0.1f, 1.0f }; /* 環境光強度 */
 
 /*
-** シェーダ
+** プログラムオブジェクト
 */
-#include "glsl.h"
-static GLuint vertShader;
-static GLuint fragShader;
 static GLuint gl2Program;
 
 /*
@@ -41,25 +27,12 @@ static GLuint gl2Program;
 */
 static void init()
 {
-  /* 初期設定 */
-  glClearColor(0.3f, 0.3f, 1.0f, 0.0f);
-  glEnable(GL_DEPTH_TEST);
-  glDisable(GL_CULL_FACE);
-
-  /* 光源の初期設定 */
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, lightcol);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, lightcol);
-  glLightfv(GL_LIGHT0, GL_AMBIENT, lightamb);
-  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-
   /* GLSL の初期化 */
   if (glslInit()) exit(1);
 
   /* シェーダオブジェクトの作成 */
-  vertShader = glCreateShader(GL_VERTEX_SHADER);
-  fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+  GLuint vertShader = glCreateShader(GL_VERTEX_SHADER);
+  GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
 
   /* シェーダのソースプログラムの読み込み */
   if (readShaderSource(vertShader, "phong.vert")) exit(1);
@@ -93,7 +66,7 @@ static void init()
   glAttachShader(gl2Program, vertShader);
   glAttachShader(gl2Program, fragShader);
 
-  /* シェーダオブジェクトの削除 */
+  /* シェーダオブジェクトに削除マークを付ける */
   glDeleteShader(vertShader);
   glDeleteShader(fragShader);
 
@@ -109,8 +82,18 @@ static void init()
     exit(1);
   }
 
-  /* シェーダプログラムの適用 */
-  glUseProgram(gl2Program);
+  /* 初期設定 */
+  glClearColor(0.3f, 0.3f, 1.0f, 0.0f);
+  glEnable(GL_DEPTH_TEST);
+  glDisable(GL_CULL_FACE);
+
+  /* 光源の初期設定 */
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, lightcol);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, lightcol);
+  glLightfv(GL_LIGHT0, GL_AMBIENT, lightamb);
+  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 }
 
 /*
@@ -118,6 +101,7 @@ static void init()
 */
 static void scene()
 {
+  /* 材質 */
   static const GLfloat diffuse[] = { 0.6f, 0.1f, 0.1f, 1.0f };
   static const GLfloat specular[] = { 0.3f, 0.3f, 0.3f, 1.0f };
 
@@ -147,6 +131,9 @@ static void scene()
 
 static void display()
 {
+  /* シェーダプログラムの適用 */
+  glUseProgram(gl2Program);
+
   /* モデルビュー変換行列の設定 */
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -165,6 +152,9 @@ static void display()
 
   /* シーンの描画 */
   scene();
+
+  /* シェーダプログラムの適用解除 */
+  glUseProgram(0);
 
   /* ダブルバッファリング */
   glutSwapBuffers();
