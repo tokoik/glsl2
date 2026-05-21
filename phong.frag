@@ -2,12 +2,15 @@
 
 // phong.frag
 
+// ラスタライザから受け取る頂点の位置の補間値
 varying vec4 position;
+
+// ラスタライザから受け取る頂点の法線ベクトルの補間値
 varying vec3 normal;
 
-void main (void)
+void main ()
 {
-  // 法線ベクトル（のフラグメントにおける補間値）
+  // 法線ベクトル
   vec3 fnormal = normalize(normal);
 
   // 光線ベクトル

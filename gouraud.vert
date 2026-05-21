@@ -2,13 +2,7 @@
 
 // gouraud.vert
 
-void main(void)
-{
-#version 120
-
-// gouraud.vert
-
-void main(void)
+void main()
 {
   // 頂点位置
   vec4 position = gl_ModelViewMatrix * gl_Vertex;

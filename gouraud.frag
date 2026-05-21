@@ -2,7 +2,7 @@
 
 // gouraud.frag
 
-void main (void)
+void main ()
 {
   // フラグメントの色
   gl_FragColor = gl_Color;
