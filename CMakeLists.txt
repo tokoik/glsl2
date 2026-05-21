@@ -110,13 +110,23 @@ elseif(WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE freeglut_static OpenGL::GL)
     target_compile_definitions(${PROJECT_NAME} PRIVATE FREEGLUT_STATIC)
 
-    # 起動時に読み込めるようにビルド後にリソースファイルを実行ファイルと同じ階層にコピーする
+    # 起動時に読み込めるようにビルド時にリソースファイルを実行ファイルと同じ階層にコピーする
+    set(COPIED_DUMMIES "")
     foreach(TEX_FILE IN LISTS RESOURCE_FILES)
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        set(DUMMY_FILE "${CMAKE_CURRENT_BINARY_DIR}/${TEX_FILE}.copied")
+        add_custom_command(
+            OUTPUT "${DUMMY_FILE}"
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/${TEX_FILE}"
-            "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
+                "${CMAKE_CURRENT_SOURCE_DIR}/${TEX_FILE}"
+                "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+            COMMAND ${CMAKE_COMMAND} -E touch "${DUMMY_FILE}"
+            DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${TEX_FILE}"
+        )
+        list(APPEND COPIED_DUMMIES "${DUMMY_FILE}")
     endforeach()
+    add_custom_target(CopyResources ALL DEPENDS ${COPIED_DUMMIES} SOURCES ${RESOURCE_FILES})
+    add_dependencies(${PROJECT_NAME} CopyResources)
 
     # このプロジェクトを Visual Studio のスタートアッププロジェクトとして設定する
     set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
@@ -142,12 +152,22 @@ else()
         m
     )
 
-    # 起動時に読み込めるようにビルド後にリソースファイルを実行ファイルと同じ階層にコピーする
+    # 起動時に読み込めるようにビルド時にリソースファイルを実行ファイルと同じ階層にコピーする
+    set(COPIED_DUMMIES "")
     foreach(TEX_FILE IN LISTS RESOURCE_FILES)
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        set(DUMMY_FILE "${CMAKE_CURRENT_BINARY_DIR}/${TEX_FILE}.copied")
+        add_custom_command(
+            OUTPUT "${DUMMY_FILE}"
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/${TEX_FILE}"
-            "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
+                "${CMAKE_CURRENT_SOURCE_DIR}/${TEX_FILE}"
+                "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+            COMMAND ${CMAKE_COMMAND} -E touch "${DUMMY_FILE}"
+            DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${TEX_FILE}"
+        )
+        list(APPEND COPIED_DUMMIES "${DUMMY_FILE}")
     endforeach()
+    add_custom_target(CopyResources ALL DEPENDS ${COPIED_DUMMIES} SOURCES ${RESOURCE_FILES})
+    add_dependencies(${PROJECT_NAME} CopyResources)
 
 endif()
