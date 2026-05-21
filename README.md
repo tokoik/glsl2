@@ -8,6 +8,8 @@
 
 このプログラムは、ブログ記事の手順に従って、[第１版ソースファイル](https://github.com/tokoik/glsl1)に対して Gouraud および Phong の手法による陰影付けを追加したものです。
 
+![Phong シェーディング](https://tokoik.github.io/blog/assets/images/glsl/glsl2t.webp)
+
 ## 2. ビルド方法
 
 このプログラムは [CMake](https://cmake.org/) を用いてビルド環境を整備します。各OSとも、ソースコードが置かれているディレクトリにターミナル（またはコマンドプロンプト）で移動してから、以下の手順を実行してください。なお、プログラムをビルドするためのバイナリディレクトリは、バージョン管理ファイル（.gitignore）の設定に合わせて `build` という名前にします。
