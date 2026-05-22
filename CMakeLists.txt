@@ -27,6 +27,9 @@ set(RESOURCE_FILES
     phong.frag
 )
 
+# ソリューションエクスプローラー用のグループ分け
+source_group("Shader Files" FILES ${RESOURCE_FILES})
+
 if(APPLE)
 
     # macOS の設定
@@ -72,7 +75,7 @@ if(APPLE)
 elseif(WIN32)
 
     # Windows (Visual Studio) の設定
-    add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+    add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${RESOURCE_FILES})
 
     # glext.h と khrplatform.h をダウンロードする
     include(FetchContent)
@@ -110,23 +113,15 @@ elseif(WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE freeglut_static OpenGL::GL)
     target_compile_definitions(${PROJECT_NAME} PRIVATE FREEGLUT_STATIC)
 
-    # 起動時に読み込めるようにビルド時にリソースファイルを実行ファイルと同じ階層にコピーする
-    set(COPIED_DUMMIES "")
-    foreach(TEX_FILE IN LISTS RESOURCE_FILES)
-        set(DUMMY_FILE "${CMAKE_CURRENT_BINARY_DIR}/${TEX_FILE}.copied")
-        add_custom_command(
-            OUTPUT "${DUMMY_FILE}"
+    # 起動時に読み込めるようにビルド後にリソースファイルを実行ファイルと同じ階層にコピーする
+    foreach(RESOURCE_FILE IN LISTS RESOURCE_FILES)
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                "${CMAKE_CURRENT_SOURCE_DIR}/${TEX_FILE}"
+                "${CMAKE_CURRENT_SOURCE_DIR}/${RESOURCE_FILE}"
                 "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-            COMMAND ${CMAKE_COMMAND} -E touch "${DUMMY_FILE}"
-            DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${TEX_FILE}"
         )
-        list(APPEND COPIED_DUMMIES "${DUMMY_FILE}")
     endforeach()
-    add_custom_target(CopyResources ALL DEPENDS ${COPIED_DUMMIES} SOURCES ${RESOURCE_FILES})
-    add_dependencies(${PROJECT_NAME} CopyResources)
 
     # このプロジェクトを Visual Studio のスタートアッププロジェクトとして設定する
     set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
@@ -137,7 +132,7 @@ elseif(WIN32)
 else()
 
     # Ubuntu Linux (その他UNIX系) の設定
-    add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+    add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${RESOURCE_FILES})
 
     # OpenGL と GLUT を探す
     find_package(OpenGL REQUIRED)
@@ -152,22 +147,14 @@ else()
         m
     )
 
-    # 起動時に読み込めるようにビルド時にリソースファイルを実行ファイルと同じ階層にコピーする
-    set(COPIED_DUMMIES "")
-    foreach(TEX_FILE IN LISTS RESOURCE_FILES)
-        set(DUMMY_FILE "${CMAKE_CURRENT_BINARY_DIR}/${TEX_FILE}.copied")
-        add_custom_command(
-            OUTPUT "${DUMMY_FILE}"
+    # 起動時に読み込めるようにビルド後にリソースファイルを実行ファイルと同じ階層にコピーする
+    foreach(RESOURCE_FILE IN LISTS RESOURCE_FILES)
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                "${CMAKE_CURRENT_SOURCE_DIR}/${TEX_FILE}"
+                "${CMAKE_CURRENT_SOURCE_DIR}/${RESOURCE_FILE}"
                 "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-            COMMAND ${CMAKE_COMMAND} -E touch "${DUMMY_FILE}"
-            DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${TEX_FILE}"
         )
-        list(APPEND COPIED_DUMMIES "${DUMMY_FILE}")
     endforeach()
-    add_custom_target(CopyResources ALL DEPENDS ${COPIED_DUMMIES} SOURCES ${RESOURCE_FILES})
-    add_dependencies(${PROJECT_NAME} CopyResources)
 
 endif()
