@@ -4,7 +4,10 @@
 
 void main()
 {
-  // 頂点位置
+  // 頂点のクリッピング座標値
+  gl_Position = ftransform();
+
+  // 頂点のワールド座標値
   vec4 position = gl_ModelViewMatrix * gl_Vertex;
 
   // 法線ベクトル
@@ -31,6 +34,4 @@ void main()
                 + gl_FrontLightProduct[0].diffuse * diffuse
                 + gl_FrontLightProduct[0].specular * specular;
 
-  // 頂点位置
-  gl_Position = ftransform();
 }

@@ -2,11 +2,14 @@
 
 // phong.frag
 
-// ラスタライザから受け取る頂点の位置の補間値
-varying vec4 position;
-
 // ラスタライザから受け取る頂点の法線ベクトルの補間値
 varying vec3 normal;
+
+// ラスタライザから受け取る光線ベクトルの補間値
+varying vec3 light;
+
+// ラスタライザから受け取る中間ベクトルの補間値
+varying vec3 halfway;
 
 void main ()
 {
@@ -14,20 +17,16 @@ void main ()
   vec3 fnormal = normalize(normal);
 
   // 光線ベクトル
-  vec3 light = normalize((gl_LightSource[0].position * position.w
-    - gl_LightSource[0].position.w * position).xyz);
-
-  // 視線ベクトル
-  vec3 view = -normalize(position.xyz);
-
+  vec3 flight = normalize(light);
+  
   // 中間ベクトル
-  vec3 halfway = normalize(light + view);
+  vec3 fhalfway = normalize(halfway);
 
   // 拡散反射率
-  float diffuse = max(dot(fnormal, light), 0.0);
+  float diffuse = max(dot(fnormal, flight), 0.0);
 
   // 鏡面反射率
-  float specular = pow(max(dot(fnormal, halfway), 0.0), gl_FrontMaterial.shininess);
+  float specular = pow(max(dot(fnormal, fhalfway), 0.0), gl_FrontMaterial.shininess);
 
   // フラグメントの色
   gl_FragColor = gl_FrontLightProduct[0].ambient
