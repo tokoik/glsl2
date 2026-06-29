@@ -2,10 +2,10 @@
 
 // phong.vert
 
-// ラスタライザに送る頂点の位置
+// ラスタライザに送る視点座標系の頂点の位置
 varying vec4 position;
 
-// ラスタライザに送る頂点の法線ベクトル
+// ラスタライザに送る視点座標系の法線ベクトル
 varying vec3 normal;
 
 void main()
@@ -13,10 +13,10 @@ void main()
   // 頂点のクリッピング座標値
   gl_Position = ftransform();
 
-  // 頂点のワールド座標値
+  // 視点座標系の頂点の位置
   position = gl_ModelViewMatrix * gl_Vertex;
 
-  // 法線ベクトル
+  // 視点座標系の法線ベクトル
   normal = normalize(gl_NormalMatrix * gl_Normal);
 
   //
