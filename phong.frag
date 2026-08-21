@@ -6,19 +6,19 @@
 varying vec4 position;
 
 // ラスタライザから受け取る視点座標系の法線ベクトルの補間値
-varying vec3 normal;
+varying vec3 vnormal;
 
 void main ()
 {
   // 視点座標系の法線ベクトル
-  vec3 fnormal = normalize(normal);
+  vec3 normal = normalize(vnormal);
 
   // 視点座標系の光線ベクトル
   vec3 light = normalize((gl_LightSource[0].position * position.w
     - gl_LightSource[0].position.w * position).xyz);
 
   // 拡散反射率
-  float diffuse = max(dot(fnormal, light), 0.0);
+  float diffuse = max(dot(normal, light), 0.0);
 
   // 視点座標系の視線ベクトル
   vec3 view = -normalize(position.xyz);
@@ -27,7 +27,7 @@ void main ()
   vec3 halfway = normalize(light + view);
 
   // 鏡面反射率
-  float specular = pow(max(dot(fnormal, halfway), 0.0),
+  float specular = pow(max(dot(normal, halfway), 0.0),
     gl_FrontMaterial.shininess);
 
   // フラグメントの色
