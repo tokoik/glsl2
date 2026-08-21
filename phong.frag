@@ -15,7 +15,7 @@ void main ()
 
   // 視点座標系の光線ベクトル
   vec3 light = normalize((gl_LightSource[0].position * position.w
-    - gl_LightSource[0].position.w * position).xyz);
+             - gl_LightSource[0].position.w * position).xyz);
 
   // 拡散反射率
   float diffuse = max(dot(fnormal, light), 0.0);
@@ -27,7 +27,8 @@ void main ()
   vec3 halfway = normalize(light + view);
 
   // 鏡面反射率
-  float specular = pow(max(dot(fnormal, halfway), 0.0), gl_FrontMaterial.shininess);
+  float specular = pow(max(dot(fnormal, halfway), 0.0),
+    gl_FrontMaterial.shininess);
 
   // フラグメントの色
   gl_FragColor = gl_FrontLightProduct[0].ambient
