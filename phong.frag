@@ -15,7 +15,7 @@ void main ()
 
   // 視点座標系の光線ベクトル
   vec3 light = normalize((gl_LightSource[0].position * position.w
-             - gl_LightSource[0].position.w * position).xyz);
+    - gl_LightSource[0].position.w * position).xyz);
 
   // 拡散反射率
   float diffuse = max(dot(fnormal, light), 0.0);
