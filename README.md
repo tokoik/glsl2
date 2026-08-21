@@ -2,9 +2,9 @@
 
 ## 1. 概要
 
-このプログラムは、OpenGL における「テクスチャマッピング (Texture Mapping)」の基礎を学ぶための、学生向けのサンプルプログラムです。本プログラムは、以下のブログ記事の解説に沿って学習を進めるための雛形として提供されています。
+このプログラムは、GLSL (OpenGL Shading Language) による陰影付け、すなわち Gouraud シェーディングと Phong シェーディングの基礎を学ぶための、学生向けのサンプルプログラムです。本プログラムは、以下のブログ記事の解説に沿って作成したものです。
 
-- [第２回 シェーダプログラムの読み込み](https://tokoik.github.io/blog/glsl%20%E5%85%A5%E9%96%80/2005/10/07/glsl.html)
+- [第２回 Gouraud シェーディングと Phong シェーディング](https://tokoik.github.io/blog/glsl%20%E5%85%A5%E9%96%80/2005/10/07/glsl.html)
 
 このプログラムは、ブログ記事の手順に従って、[第１版ソースファイル](https://github.com/tokoik/glsl1)に対して Gouraud および Phong の手法による陰影付けを追加したものです。
 
@@ -186,7 +186,7 @@ Gouraud シェーディングでは、**頂点単位（バーテックスシェ�
 
    void main ()
    {
-     // 補間された色をそのまま出力
+     // フラグメントの色
      gl_FragColor = gl_Color;
    }
    ```
@@ -196,7 +196,7 @@ Gouraud シェーディングでは、**頂点単位（バーテックスシェ�
 Phong シェーディングでは、頂点シェーダは位置と法線ベクトルの受け渡しのみを行い、**画素（フラグメント）単位（フラグメントシェーダ）**で陰影（ライティング）計算を行います。これにより、ポリゴン境界を目立たなくし、滑らかな曲面とシャープで美しい鏡面反射ハイライトを表現できます。
 
 1. **バーテックスシェーダ ([phong.vert](https://github.com/tokoik/glsl2/blob/main/phong.vert))**
-   - 頂点位置と法線ベクトルを視点座標系に変換し、それぞれフラグメントシェーダへ渡す `varying` 変数である `position` および `normal` に代入します。
+   - 頂点位置と法線ベクトルを視点座標系に変換し、それぞれフラグメントシェーダへ渡す `varying` 変数である `position` および `vnormal` に代入します。
 
    ```glsl
    #version 120
@@ -207,7 +207,7 @@ Phong シェーディングでは、頂点シェーダは位置と法線ベク�
    varying vec4 position;
 
    // ラスタライザに送る視点座標系の法線ベクトル
-   varying vec3 normal;
+   varying vec3 vnormal;
 
    void main()
    {
@@ -218,7 +218,7 @@ Phong シェーディングでは、頂点シェーダは位置と法線ベク�
      position = gl_ModelViewMatrix * gl_Vertex;
 
      // 視点座標系の法線ベクトル
-     normal = normalize(gl_NormalMatrix * gl_Normal);
+     vnormal = normalize(gl_NormalMatrix * gl_Normal);
 
      //
      // gouraud.vert の以下削除 (phong.frag に移動)
@@ -227,7 +227,7 @@ Phong シェーディングでは、頂点シェーダは位置と法線ベク�
    ```
 
 2. **フラグメントシェーダ ([phong.frag](https://github.com/tokoik/glsl2/blob/main/phong.frag))**
-   - 補間されて送られてきた `normal` は、線形補間の影響で単位ベクトルではなくなっているため、まず再正規化を行って `fnormal` を得ます。
+   - 補間されて送られてきた `vnormal` は、線形補間の影響で単位ベクトルではなくなっているため、まず再正規化を行って `normal` を得ます。
    - 各画素の位置における光線、視線、中間ベクトルを算出し、フラグメント単位で陰影計算を行い、結果を `gl_FragColor` に出力します。
 
    ```glsl
@@ -239,19 +239,19 @@ Phong シェーディングでは、頂点シェーダは位置と法線ベク�
    varying vec4 position;
 
    // ラスタライザから受け取る視点座標系の法線ベクトルの補間値
-   varying vec3 normal;
+   varying vec3 vnormal;
 
    void main ()
    {
      // 視点座標系の法線ベクトル
-     vec3 fnormal = normalize(normal);
+     vec3 normal = normalize(vnormal);
 
      // 視点座標系の光線ベクトル
      vec3 light = normalize((gl_LightSource[0].position * position.w
        - gl_LightSource[0].position.w * position).xyz);
 
      // 拡散反射率
-     float diffuse = max(dot(fnormal, light), 0.0);
+     float diffuse = max(dot(normal, light), 0.0);
 
      // 視点座標系の視線ベクトル
      vec3 view = -normalize(position.xyz);
@@ -260,7 +260,8 @@ Phong シェーディングでは、頂点シェーダは位置と法線ベク�
      vec3 halfway = normalize(light + view);
 
      // 鏡面反射率
-     float specular = pow(max(dot(fnormal, halfway), 0.0), gl_FrontMaterial.shininess);
+     float specular = pow(max(dot(normal, halfway), 0.0),
+       gl_FrontMaterial.shininess);
 
      // フラグメントの色
      gl_FragColor = gl_FrontLightProduct[0].ambient
