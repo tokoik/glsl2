@@ -4,7 +4,7 @@
 
 このプログラムは、GLSL (OpenGL Shading Language) による陰影付け、すなわち Gouraud シェーディングと Phong シェーディングの基礎を学ぶための、学生向けのサンプルプログラムです。本プログラムは、以下のブログ記事の解説に沿って作成したものです。
 
-- [第２回 Gouraud シェーディングと Phong シェーディング](https://tokoik.github.io/blog/glsl%20%E5%85%A5%E9%96%80/2005/10/07/glsl.html)
+- [第２回 Gouraud シェーディングと Phong シェーディング](https://tokoik.github.io/blog/2005-10-07.html)
 
 このプログラムは、ブログ記事の手順に従って、[第１版ソースファイル](https://github.com/tokoik/glsl1)に対して Gouraud および Phong の手法による陰影付けを追加したものです。
 
